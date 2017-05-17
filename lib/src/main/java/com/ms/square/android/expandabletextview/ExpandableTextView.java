@@ -241,6 +241,10 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         requestLayout();
     }
 
+    public void setMaxCollapsedLines(int maxLines) {
+        mMaxCollapsedLines = maxLines;
+    }
+
     @Nullable
     public CharSequence getText() {
         if (mTv == null) {
