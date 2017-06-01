@@ -32,7 +32,6 @@ import android.util.SparseBooleanArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
@@ -137,7 +136,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                applyAlphaAnimation(mTv, mAnimAlphaStart);
+                mTv.setAlpha(mAnimAlphaStart);
             }
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -262,10 +261,10 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         mCollapseDrawable = typedArray.getDrawable(R.styleable.ExpandableTextView_collapseDrawable);
 
         if (mExpandDrawable == null) {
-            mExpandDrawable = getDrawable(getContext(), R.drawable.ic_expand_more_black_12dp);
+            mExpandDrawable = getDrawable(getContext(), R.drawable.ic_expand_more_12dp);
         }
         if (mCollapseDrawable == null) {
-            mCollapseDrawable = getDrawable(getContext(), R.drawable.ic_expand_less_black_12dp);
+            mCollapseDrawable = getDrawable(getContext(), R.drawable.ic_expand_less_12dp);
         }
 
         typedArray.recycle();
@@ -285,31 +284,14 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         mButton.setOnClickListener(this);
     }
 
-    private static boolean isPostHoneycomb() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-    }
-
-    private static boolean isPostLolipop() {
+    private static boolean isPostLollipop() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private static void applyAlphaAnimation(View view, float alpha) {
-        if (isPostHoneycomb()) {
-            view.setAlpha(alpha);
-        } else {
-            AlphaAnimation alphaAnimation = new AlphaAnimation(alpha, alpha);
-            // make it instant
-            alphaAnimation.setDuration(0);
-            alphaAnimation.setFillAfter(true);
-            view.startAnimation(alphaAnimation);
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static Drawable getDrawable(@NonNull Context context, @DrawableRes int resId) {
         Resources resources = context.getResources();
-        if (isPostLolipop()) {
+        if (isPostLollipop()) {
             return resources.getDrawable(resId, context.getTheme());
         } else {
             return resources.getDrawable(resId);
@@ -339,7 +321,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
             final int newHeight = (int)((mEndHeight - mStartHeight) * interpolatedTime + mStartHeight);
             mTv.setMaxHeight(newHeight - mMarginBetweenTxtAndBottom);
             if (Float.compare(mAnimAlphaStart, 1.0f) != 0) {
-                applyAlphaAnimation(mTv, mAnimAlphaStart + interpolatedTime * (1.0f - mAnimAlphaStart));
+                mTv.setAlpha(mAnimAlphaStart + interpolatedTime * (1.0f - mAnimAlphaStart));
             }
             mTargetView.getLayoutParams().height = newHeight;
             mTargetView.requestLayout();
